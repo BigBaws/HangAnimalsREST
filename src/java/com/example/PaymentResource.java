@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author BigBaws
  */
-@Path("/Payment")
+@Path("/payment")
 public class PaymentResource {
 
     @Context

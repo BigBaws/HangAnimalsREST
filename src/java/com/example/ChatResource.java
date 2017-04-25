@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author BigBaws
  */
-@Path("/Chat")
+@Path("/chat")
 public class ChatResource {
 
     @Context

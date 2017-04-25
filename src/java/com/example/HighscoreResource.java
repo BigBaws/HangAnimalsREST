@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author BigBaws
  */
-@Path("/Highscore")
+@Path("/highscore")
 public class HighscoreResource {
 
     @Context

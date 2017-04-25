@@ -13,7 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-@Path("/Logic")
+@Path("/logic")
 public class LogicResource {
 
     @Context
@@ -24,7 +24,7 @@ public class LogicResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getWord(@QueryParam("Token") String token) {
+    public String getWord(@QueryParam("token") String token) {
         return "";
     }
 

@@ -2,6 +2,7 @@ package com.example;
 
 import brugerautorisation.data.Bruger;
 import brugerautorisation.transport.rmi.Brugeradmin;
+import hanganimals.User;
 import hanganimals.gamelogic.SinglePlayerLogic;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -23,11 +24,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-@Path("/Login")
+@Path("/login")
 public class LoginResource {
     
-
     //ArrayList<MultiPlayerGameObjects> multiplayerGames = new ArrayList<>();
+    
+    /* User */
+    String token, animal, animalcolor;
+    int currency, singleplayer, multiplayer;
     
     @Context
     private UriInfo context;
@@ -37,7 +41,7 @@ public class LoginResource {
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String rmiLogin(@QueryParam("Username") String username, @QueryParam("Password") String password) throws Exception {
+    public String rmiLogin(@QueryParam("username") String username, @QueryParam("password") String password) throws Exception {
         try {
             Brugeradmin ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
             Bruger b = ba.hentBruger(username, password);
@@ -47,34 +51,59 @@ public class LoginResource {
                 PreparedStatement statement = con.prepareStatement("SELECT * FROM hang_users WHERE userid = '"+b.brugernavn+"';");
                 ResultSet res = statement.executeQuery();
                 if (res.first()) {
-                    String token = generateToken();
-                    return "{"
-                        + "\"name\":\""+b.fornavn+" "+b.efternavn+"\", "
-                        + "\"id\":\""+b.brugernavn+"\", "
-                        + "\"image\":\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\", "
-                        + "\"study\":\""+b.studeretning+"\", "
-                        + "\"currency\":\""+res.getInt("currency")+"\", "
-                        + "\"gameid\":\""+res.getInt("gameid")+"\", "
-                        + "\"animal\":\""+res.getString("animal")+"\", "
-                        + "\"animalcolor\":\""+res.getString("animalcolor")+"\" "
-                        + "\"token\":\""+token+"\" "
-                        + "}";
+                    token = generateToken();
+                    currency = res.getInt("currency");
+                    singleplayer = res.getInt("singleplayer");
+                    multiplayer = res.getInt("multiplayer");
+                    animal = res.getString("animal");
+                    animalcolor = res.getString("animalcolor");
                 } else {
                     statement = con.prepareStatement("INSERT INTO hang_users (userid, currency, gameid, animal, animalcolor) VALUES ('"+b.brugernavn+"', '0', '0', 'sheep', 'white');");
                     statement.execute();
-                    String token = generateToken();
-                    return "{"
-                        + "\"name\":\""+b.fornavn+" "+b.efternavn+"\", "
-                        + "\"id\":\""+b.brugernavn+"\", "
-                        + "\"image\":\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\", "
-                        + "\"study\":\""+b.studeretning+"\", "
-                        + "\"currency\":\"0\", "
-                        + "\"gameid\":\"0\", "
-                        + "\"animal\":\"sheep\", "
-                        + "\"animalcolor\":\"white\", "
-                        + "\"token\":\""+token+"\" "
-                        + "}";
+                    token = generateToken();
+                    currency = 0;
+                    singleplayer = 0;
+                    multiplayer = 0;
+                    animal = "sheep";
+                    animalcolor = "white";
                 }
+                User user = new User(
+                        b.fornavn+" "+b.efternavn,
+                        b.brugernavn,
+                        "https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId,
+                        b.studeretning,
+                        currency,
+                        singleplayer,
+                        multiplayer,
+                        animal,
+                        animalcolor,
+                        token
+                    );
+                UserResource.onlineUsers.add(user);
+                return "{"
+                    + "\"name\":\""+b.fornavn+" "+b.efternavn+"\", "
+                    + "\"userid\":\""+b.brugernavn+"\", "
+                    + "\"image\":\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\", "
+                    + "\"study\":\""+b.studeretning+"\", "
+                    + "\"currency\":\""+currency+"\", "
+                    + "\"singleplayer\":\""+singleplayer+"\","
+                    + "\"multiplayer\":\""+multiplayer+"\", "
+                    + "\"animal\":\""+animal+"\", "
+                    + "\"animalcolor\":\""+animalcolor+"\", "
+                    + "\"token\":\""+token+"\" "
+                    + "}";
+//                return "{"
+//                    + "\"name\": [\""+b.fornavn+" "+b.efternavn+"\"] , "
+//                    + "\"id\": [\""+b.brugernavn+"\"] , "
+//                    + "\"image\": [\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\"] , "
+//                    + "\"study\": [\""+b.studeretning+"\"] , "
+//                    + "\"currency\": [\""+currency+"\"] , "
+//                    + "\"singleplayer\": [\""+singleplayer+"\"] , "
+//                    + "\"multiplayer\": [\""+multiplayer+"\"] , "
+//                    + "\"animal\": [\""+animal+"\"] , "
+//                    + "\"animalcolor\": [\""+animalcolor+"\"] , "
+//                    + "\"token\": [\""+token+"\"] "
+//                    + "}";
             } else {
                 return null;
             }

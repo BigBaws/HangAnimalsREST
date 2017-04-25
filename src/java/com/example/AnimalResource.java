@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
  *
  * @author BigBaws
  */
-@Path("/Animal")
+@Path("/animal")
 public class AnimalResource {
 
     @Context
@@ -35,7 +35,7 @@ public class AnimalResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getAnimal(@QueryParam("Username") String Username) throws Exception{
+    public String getAnimal(@QueryParam("username") String username) throws Exception{
         try{
             Class.forName("com.mysql.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://185.121.172.101:3306/zhgmzrgi_hanganimals", "zhgmzrgi_REST", "xcv123REST");
