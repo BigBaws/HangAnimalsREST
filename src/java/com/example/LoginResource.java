@@ -39,7 +39,7 @@ public class LoginResource {
     public LoginResource() {
     }
     
-    @GET
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     public String rmiLogin(@QueryParam("username") String username, @QueryParam("password") String password) throws Exception {
         try {
@@ -58,7 +58,7 @@ public class LoginResource {
                     animal = res.getString("animal");
                     animalcolor = res.getString("animalcolor");
                 } else {
-                    statement = con.prepareStatement("INSERT INTO hang_users (userid, currency, gameid, animal, animalcolor) VALUES ('"+b.brugernavn+"', '0', '0', 'sheep', 'white');");
+                    statement = con.prepareStatement("INSERT INTO hang_users (userid, currency, singleplayer, multiplayer, animal, animalcolor) VALUES ('"+b.brugernavn+"', '0', '0', '0', 'sheep', 'white');");
                     statement.execute();
                     token = generateToken();
                     currency = 0;

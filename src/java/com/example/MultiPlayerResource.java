@@ -7,12 +7,14 @@ import hanganimals.models.MultiplayerUser;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -51,7 +53,6 @@ public class MultiPlayerResource {
     public String listGames(@QueryParam("token") String token, @QueryParam("username") String username) throws Exception {
         
         JSONArray jsonMap = new JSONArray();
-        int i = 0;
         for(String key : multiplayerGames.keySet()) {
             MultiPlayerGame entry = multiplayerGames.get(key);
             JSONObject object = new JSONObject();
@@ -66,7 +67,7 @@ public class MultiPlayerResource {
         return returnObject.toString();
     }
     
-    @GET
+    @POST
     @Path("{roomid}/join")
     @Produces(MediaType.APPLICATION_JSON)
     public String joinRoom (
@@ -125,7 +126,14 @@ public class MultiPlayerResource {
                 while (multiplayerGames.get(roomid).gameIsActive()) {
                     /* Do Nothing */
                 }
-                return multiplayerGames.get(roomid).winner + "WINS! ("+multiplayerGames.get(roomid).gameIsActive()+")";
+                try {
+                    JSONObject object = new JSONObject();
+                    object.put("winner", multiplayerGames.get(roomid).winner);
+                    return object.toString();
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+
             }
         }).start();
         return "WTF";
@@ -141,11 +149,10 @@ public class MultiPlayerResource {
             
         JSONObject object = new JSONObject();
         object.put("userword", multiplayerGames.get(roomid).getUser(userid).userword);
-        
         return object.toString();
     }
     
-    @GET
+    @POST
     @Path("{roomid}/guess")
     @Produces(MediaType.APPLICATION_JSON)
     public String guess(
@@ -169,6 +176,29 @@ public class MultiPlayerResource {
         return object.toString();
     }
     
+   
+    @GET
+    @Path("{roomid}/users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getUsers(
+            @PathParam("roomid") String roomid,
+            @QueryParam("token") String token) throws Exception {
+        
+        Collection<MultiplayerUser> usersCollection = multiplayerGames.get(roomid).users.values();
+        MultiplayerUser[] users = usersCollection.toArray(new MultiplayerUser[usersCollection.size()]);
+        
+        JSONArray jsonMap = new JSONArray();
+        for(MultiplayerUser u : users) {
+            JSONObject object = new JSONObject();
+            object.put("name", u.userid);
+            object.put("gamescore", u.gamescore);
+            jsonMap.put(object);
+        }
+        
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("users", jsonMap);
+        return returnObject.toString();
+    }
     
     private String generateGameID() {
         Random random = new SecureRandom();

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class MultiPlayerGame {
     
-    private HashMap<String, MultiplayerUser> users = new HashMap<>();
+    public HashMap<String, MultiplayerUser> users = new HashMap<>();
     public String roomid, word, time, winner;
     public int round;
     
