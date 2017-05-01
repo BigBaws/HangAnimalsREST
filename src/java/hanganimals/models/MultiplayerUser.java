@@ -2,7 +2,6 @@ package hanganimals.models;
 
 import hanganimals.MultiplayerGame;
 import hanganimals.database.Connector;
-import hanganimals.gamelogic.MultiplayerLogic;
 import java.sql.SQLException;
 import java.util.ArrayList;
 

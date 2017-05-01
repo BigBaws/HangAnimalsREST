@@ -1,23 +1,15 @@
 package com.example;
 
-import static com.example.MultiPlayerResource.multiplayerGames;
-import hanganimals.MultiplayerGame;
 import hanganimals.models.ChatMessages;
 import hanganimals.models.ChatUser;
-import hanganimals.models.MultiplayerUser;
 import java.util.HashMap;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONObject;

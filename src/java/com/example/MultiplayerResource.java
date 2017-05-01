@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Path("/multiplayer/room")
-public class MultialayerResource {
+public class MultiplayerResource {
     
     public static HashMap<String, MultiplayerGame> multiplayerGames = new HashMap<>();
     Connector conn = Connector.getInstance();
@@ -33,7 +33,7 @@ public class MultialayerResource {
     @Context
     private UriInfo context;
     
-    public MultialayerResource() {}
+    public MultiplayerResource() {}
     
     @GET
     @Path("create")

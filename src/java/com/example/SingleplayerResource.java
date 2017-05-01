@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONObject;
 
 @Path("/singleplayer")
-public class SinglealayerResource {
+public class SingleplayerResource {
     
     public static HashMap<String, SingleplayerGame> games = new HashMap<>();
     Connector conn = Connector.getInstance();
@@ -24,7 +24,7 @@ public class SinglealayerResource {
     @Context
     private UriInfo context;
     
-    public SinglealayerResource() {
+    public SingleplayerResource() {
         /* Get singleplayer games from database */
         
     }

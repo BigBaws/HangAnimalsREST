@@ -7,14 +7,14 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Path;
 
 @Path("/SinglePlayerLogic")
-public class SinglealayerLogicResource {
+public class SingleplayerLogicResource {
 
     ArrayList<SinglePlayerGameObjects> singleplayerGames = new ArrayList<>();
     
     @Context
     private UriInfo context;
 
-    public SinglealayerLogicResource() {}
+    public SingleplayerLogicResource() {}
 
     private String InitializeGameWithUserName(String token, String username) {
         for (SinglePlayerGameObjects g : singleplayerGames) {
