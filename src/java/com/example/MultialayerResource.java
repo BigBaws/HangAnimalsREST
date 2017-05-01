@@ -1,8 +1,8 @@
 package com.example;
 
-import hanganimals.MultiPlayerGame;
+import hanganimals.MultiplayerGame;
 import hanganimals.database.Connector;
-import hanganimals.gamelogic.MultiPlayerLogic;
+import hanganimals.gamelogic.MultiplayerLogic;
 import hanganimals.models.MultiplayerUser;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -25,21 +25,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Path("/multiplayer/room")
-public class MultiPlayerResource {
+public class MultialayerResource {
     
-    public static HashMap<String, MultiPlayerGame> multiplayerGames = new HashMap<>();
+    public static HashMap<String, MultiplayerGame> multiplayerGames = new HashMap<>();
     Connector conn = Connector.getInstance();
     
     @Context
     private UriInfo context;
     
-    public MultiPlayerResource() {}
+    public MultialayerResource() {}
     
     @GET
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
     public String createRoom(@QueryParam("token") String token) throws Exception {
-        MultiPlayerGame game = new MultiPlayerGame(generateGameID());
+        MultiplayerGame game = new MultiplayerGame(generateGameID());
         
         conn.update("INSERT INTO hang_multi_rooms (roomid, round, word) VALUES ('"+game.roomid+"', '1', '"+game.word+"');");
         
@@ -51,19 +51,16 @@ public class MultiPlayerResource {
     @Path("listGames")
     @Produces(MediaType.APPLICATION_JSON)
     public String listGames(@QueryParam("token") String token, @QueryParam("username") String username) throws Exception {
-        
         JSONArray jsonMap = new JSONArray();
         for(String key : multiplayerGames.keySet()) {
-            MultiPlayerGame entry = multiplayerGames.get(key);
+            MultiplayerGame entry = multiplayerGames.get(key);
             JSONObject object = new JSONObject();
             object.put("roomid", entry.roomid);
             object.put("round", entry.round);
             jsonMap.put(object);
         }
-        
         JSONObject returnObject = new JSONObject();
         returnObject.put("games", jsonMap);
-    
         return returnObject.toString();
     }
     
@@ -78,7 +75,7 @@ public class MultiPlayerResource {
             
             /* Check if room is in the object list */
             if(multiplayerGames.containsKey(roomid)) {
-                MultiPlayerGame game = multiplayerGames.get(roomid);
+                MultiplayerGame game = multiplayerGames.get(roomid);
                 conn.update("INSERT INTO hang_multi_users (roomid, userid) VALUES ('"+roomid+"', '"+userid+"');");
                 MultiplayerUser user = new MultiplayerUser(userid, game);
                 game.addUser(user);
@@ -133,7 +130,7 @@ public class MultiPlayerResource {
                 } catch (Exception e) {
                     return e.getMessage();
                 }
-
+                
             }
         }).start();
         return "WTF";
@@ -146,7 +143,7 @@ public class MultiPlayerResource {
             @PathParam("roomid") String roomid,
             @QueryParam("token") String token,
             @QueryParam("userid") String userid) throws Exception {
-            
+        
         JSONObject object = new JSONObject();
         object.put("userword", multiplayerGames.get(roomid).getUser(userid).userword);
         return object.toString();
@@ -160,12 +157,10 @@ public class MultiPlayerResource {
             @QueryParam("token") String token,
             @QueryParam("userid") String userid,
             @QueryParam("letter") String letter) throws Exception {
-        MultiPlayerGame game = multiplayerGames.get(roomid);
+        MultiplayerGame game = multiplayerGames.get(roomid);
         MultiplayerUser user = game.getUser(userid);
         
-        String lower = letter.toLowerCase();
-        
-        MultiPlayerLogic.guessLetter(game, userid, lower);
+        MultiplayerLogic.guessLetter(game, userid, letter.toLowerCase());
         
         JSONObject object = new JSONObject();
         object.put("word", user.userword);
@@ -176,7 +171,7 @@ public class MultiPlayerResource {
         return object.toString();
     }
     
-   
+    
     @GET
     @Path("{roomid}/users")
     @Produces(MediaType.APPLICATION_JSON)
@@ -199,6 +194,26 @@ public class MultiPlayerResource {
         returnObject.put("users", jsonMap);
         return returnObject.toString();
     }
+    
+    @POST
+    @Path("{roomid}/leave")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void leave(
+            @PathParam("roomid") String roomid,
+            @QueryParam("token") String token,
+            @QueryParam("userid") String userid) throws Exception {
+        if (!userid.isEmpty() || !roomid.isEmpty()) {
+            
+            /* Check if room is in the object list */
+            if(multiplayerGames.containsKey(roomid)) {
+                MultiplayerGame game = multiplayerGames.get(roomid);
+                MultiplayerUser user = new MultiplayerUser(userid, game);
+                conn.query("DELETE FROM hang_multi_users WHERE userid='"+userid+"'");
+                game.removeUser(user);
+            }
+        }
+    }
+    
     
     private String generateGameID() {
         Random random = new SecureRandom();

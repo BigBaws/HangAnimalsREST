@@ -1,11 +1,11 @@
 package hanganimals;
 
-import hanganimals.gamelogic.MultiPlayerLogic;
+import hanganimals.gamelogic.MultiplayerLogic;
 import hanganimals.gamelogic.WordEngine;
 import hanganimals.models.MultiplayerUser;
 import java.util.HashMap;
 
-public class MultiPlayerGame {
+public class MultiplayerGame {
     
     public HashMap<String, MultiplayerUser> users = new HashMap<>();
     public String roomid, word, time, winner;
@@ -14,7 +14,7 @@ public class MultiPlayerGame {
     public boolean gameIsWon = false;
     public boolean gameIsLost = false;
     
-    public MultiPlayerGame(String roomid) {
+    public MultiplayerGame(String roomid) {
         this.roomid = roomid;
         this.word = WordEngine.getWord();
         this.round = 1;
@@ -26,9 +26,11 @@ public class MultiPlayerGame {
     
     public void addUser(MultiplayerUser user) {
         users.put(user.userid, user);
-        
-        MultiPlayerLogic.updateVisibleWord(this, user.userid);
-
+        MultiplayerLogic.updateVisibleWord(this, user.userid);
+    }
+    
+    public void removeUser(MultiplayerUser user) {
+        users.remove(user);
     }
     
     public int getNumberOfFinishedUsers() {

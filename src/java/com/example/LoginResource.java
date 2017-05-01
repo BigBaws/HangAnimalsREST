@@ -3,31 +3,27 @@ package com.example;
 import brugerautorisation.data.Bruger;
 import brugerautorisation.transport.rmi.Brugeradmin;
 import hanganimals.User;
-import hanganimals.gamelogic.SinglePlayerLogic;
+import hanganimals.database.Connector;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.security.SecureRandom;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Random;
-import javax.servlet.ServletException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.json.JSONObject;
 
 @Path("/login")
 public class LoginResource {
     
-    //ArrayList<MultiPlayerGameObjects> multiplayerGames = new ArrayList<>();
+    Connector conn = Connector.getInstance();
     
     /* User */
     String token, animal, animalcolor;
@@ -78,36 +74,24 @@ public class LoginResource {
                         animal,
                         animalcolor,
                         token
-                    );
+                );
                 UserResource.onlineUsers.add(user);
-                return "{"
-                    + "\"name\":\""+b.fornavn+" "+b.efternavn+"\", "
-                    + "\"userid\":\""+b.brugernavn+"\", "
-                    + "\"image\":\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\", "
-                    + "\"study\":\""+b.studeretning+"\", "
-                    + "\"currency\":\""+currency+"\", "
-                    + "\"singleplayer\":\""+singleplayer+"\","
-                    + "\"multiplayer\":\""+multiplayer+"\", "
-                    + "\"animal\":\""+animal+"\", "
-                    + "\"animalcolor\":\""+animalcolor+"\", "
-                    + "\"token\":\""+token+"\" "
-                    + "}";
-//                return "{"
-//                    + "\"name\": [\""+b.fornavn+" "+b.efternavn+"\"] , "
-//                    + "\"id\": [\""+b.brugernavn+"\"] , "
-//                    + "\"image\": [\"https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId+"\"] , "
-//                    + "\"study\": [\""+b.studeretning+"\"] , "
-//                    + "\"currency\": [\""+currency+"\"] , "
-//                    + "\"singleplayer\": [\""+singleplayer+"\"] , "
-//                    + "\"multiplayer\": [\""+multiplayer+"\"] , "
-//                    + "\"animal\": [\""+animal+"\"] , "
-//                    + "\"animalcolor\": [\""+animalcolor+"\"] , "
-//                    + "\"token\": [\""+token+"\"] "
-//                    + "}";
+                JSONObject object = new JSONObject();
+                object.put("name", b.fornavn+" "+b.efternavn);
+                object.put("userid", b.brugernavn);
+                object.put("image", "https://www.dtubasen.dtu.dk/showimage.aspx?id="+b.campusnetId);
+                object.put("study", b.studeretning);
+                object.put("currency", currency);
+                object.put("singleplayer", singleplayer);
+                object.put("multiplayer", multiplayer);
+                object.put("animal", animal);
+                object.put("animalcolor", animalcolor);
+                object.put("token", token);
+                return object.toString();
             } else {
                 return null;
             }
-        } catch (NotBoundException e) {
+        } catch (SQLException e) {
             throw e;
         } catch (MalformedURLException e) {
             throw e;

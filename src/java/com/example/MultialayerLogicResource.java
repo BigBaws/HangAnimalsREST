@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
  * @author BigBaws
  */
 @Path("/MultiPlayerLogic")
-public class MultiPlayerLogicResource {
+public class MultialayerLogicResource {
 
     @Context
     private UriInfo context;
@@ -23,8 +23,7 @@ public class MultiPlayerLogicResource {
     /**
      * Creates a new instance of MultiPlayerLogicResource
      */
-    public MultiPlayerLogicResource() {
-    }
+    public MultialayerLogicResource() {}
 
     /**
      * Retrieves representation of an instance of com.example.MultiPlayerLogicResource

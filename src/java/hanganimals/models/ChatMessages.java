@@ -5,24 +5,22 @@ import hanganimals.database.Connector;
 import hanganimals.gamelogic.MultiplayerLogic;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
-public class MultiplayerUser {
+public class ChatMessages {
     
     Connector conn = Connector.getInstance();
         
-    public ArrayList<String> usedletters = new ArrayList<>();
-    public int wrongs, combo, gamescore;
-    public String userid, name, userword;
-    public boolean lastLetterCorrect;
-    
-    public boolean Won;
-    public boolean Lost;
+    public String userid, name, message;
+    public Date time;
 
-    public MultiplayerUser(String userid, MultiplayerGame game ) throws SQLException {
+    public ChatMessages(String userid, String name, String message) throws SQLException {
         this.userid = userid;
+        this.name = name;
+        this.message = message;
+        this.time = new Date();
         
         //conn.query("SELECT * FROM hang_users WHERE userid='"+userid+"';");
-        
     }
     
 }

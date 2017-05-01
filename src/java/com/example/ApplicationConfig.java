@@ -34,12 +34,12 @@ public class ApplicationConfig extends Application {
         resources.add(com.example.HighscoreResource.class);
         resources.add(com.example.LogicResource.class);
         resources.add(com.example.LoginResource.class);
-        resources.add(com.example.MultiPlayerLogicResource.class);
-        resources.add(com.example.MultiPlayerResource.class);
+        resources.add(com.example.MultialayerLogicResource.class);
+        resources.add(com.example.MultialayerResource.class);
         resources.add(com.example.PaymentResource.class);
         resources.add(com.example.ServiceResource.class);
-        resources.add(com.example.SinglePlayerLogicResource.class);
-        resources.add(com.example.SinglePlayerResource.class);
+        resources.add(com.example.SinglealayerLogicResource.class);
+        resources.add(com.example.SinglealayerResource.class);
         resources.add(com.example.UserResource.class);
     }
     

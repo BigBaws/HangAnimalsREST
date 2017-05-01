@@ -1,12 +1,11 @@
 package hanganimals.models;
 
-import hanganimals.MultiplayerGame;
+import hanganimals.SingleplayerGame;
 import hanganimals.database.Connector;
-import hanganimals.gamelogic.MultiplayerLogic;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class MultiplayerUser {
+public class SingleplayerUser {
     
     Connector conn = Connector.getInstance();
         
@@ -18,7 +17,7 @@ public class MultiplayerUser {
     public boolean Won;
     public boolean Lost;
 
-    public MultiplayerUser(String userid, MultiplayerGame game ) throws SQLException {
+    public SingleplayerUser(String userid, SingleplayerGame game) throws SQLException {
         this.userid = userid;
         
         //conn.query("SELECT * FROM hang_users WHERE userid='"+userid+"';");
