@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.security.SecureRandom;
 import java.sql.*;
 import java.util.Random;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.POST;
@@ -37,7 +38,7 @@ public class LoginResource {
     
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String rmiLogin(@QueryParam("username") String username, @QueryParam("password") String password) throws Exception {
+    public String rmiLogin(@FormParam("username") String username, @FormParam("password") String password) throws Exception {
         try {
             Brugeradmin ba = (Brugeradmin) Naming.lookup("rmi://javabog.dk/brugeradmin");
             Bruger b = ba.hentBruger(username, password);

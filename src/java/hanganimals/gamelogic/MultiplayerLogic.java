@@ -5,7 +5,7 @@ import hanganimals.models.MultiplayerUser;
 
 public class MultiplayerLogic {
     
-    public static String guessLetter(MultiplayerGame game, String userid, String letter) {
+    public static String guessLetter(MultiplayerGame game, String userid, String letter) throws Exception {
         MultiplayerUser user = game.getUser(userid);
         if (user.usedletters.contains(letter)) {
             return "You have already guessed on "+letter;
@@ -24,7 +24,7 @@ public class MultiplayerLogic {
         return updateVisibleWord(game, userid);
     }
     
-    public static String updateVisibleWord(MultiplayerGame game, String userid) {
+    public static String updateVisibleWord(MultiplayerGame game, String userid) throws Exception {
         MultiplayerUser user = game.getUser(userid);
         user.userword = "";
         for (int n = 0; n < game.word.length(); n++) {
@@ -33,22 +33,25 @@ public class MultiplayerLogic {
                 user.userword = user.userword + letter;
             } else {
                 user.userword = user.userword + "*";
+                user.gamescore--;
             }
         }
         if (!user.userword.contains("*")) {
             int users = game.getNumberOfFinishedUsers();
             
-            if(users == 0)
+            if(users == 0) {
                 user.gamescore += 10;
-            else if(users == 1)
+                game.nextRound();
+            } else if(users == 1) {
                 user.gamescore += 5;
-            else if(users == 2)
+            } else if(users == 2) {
                 user.gamescore += 2;
+            }
             
             user.Won = true;
             game.gameIsWon = true;
-            //game.winner = user.name;
-            game.winner = user.userid; 
+            game.winner = user.userid;
+            game.gameIsActive();
         }
         return user.userword;
     }

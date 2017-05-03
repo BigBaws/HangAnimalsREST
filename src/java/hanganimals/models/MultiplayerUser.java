@@ -17,7 +17,7 @@ public class MultiplayerUser {
     public boolean Won;
     public boolean Lost;
 
-    public MultiplayerUser(String userid, MultiplayerGame game ) throws SQLException {
+    public MultiplayerUser(String userid, MultiplayerGame game) throws SQLException {
         this.userid = userid;
         
         //conn.query("SELECT * FROM hang_users WHERE userid='"+userid+"';");

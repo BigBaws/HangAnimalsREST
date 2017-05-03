@@ -24,7 +24,7 @@ public class MultiplayerGame {
         return users.get(userid);
     }
     
-    public void addUser(MultiplayerUser user) {
+    public void addUser(MultiplayerUser user) throws Exception {
         users.put(user.userid, user);
         MultiplayerLogic.updateVisibleWord(this, user.userid);
     }
@@ -42,6 +42,22 @@ public class MultiplayerGame {
         }
         
         return i;
+    }
+    
+    public void nextRound() throws Exception {
+        for (String key : users.keySet()) {
+            MultiplayerUser user = users.get(key);
+            if (this.winner == user.userid) {
+                this.word = WordEngine.getWord();
+            }
+            user.usedletters.clear();
+            user.wrongs = 0;
+            user.lastLetterCorrect = false;
+            MultiplayerLogic.updateVisibleWord(this, user.userid);
+        }
+        this.round++;
+        this.gameIsWon = false;
+        this.gameIsLost = false;
     }
     
     /*

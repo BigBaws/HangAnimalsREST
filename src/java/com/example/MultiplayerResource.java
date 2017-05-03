@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -35,7 +36,7 @@ public class MultiplayerResource {
     
     public MultiplayerResource() {}
     
-    @GET
+    @PUT
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
     public String createRoom(@QueryParam("token") String token) throws Exception {
@@ -44,11 +45,13 @@ public class MultiplayerResource {
         conn.update("INSERT INTO hang_multi_rooms (roomid, round, word) VALUES ('"+game.roomid+"', '1', '"+game.word+"');");
         
         multiplayerGames.put(game.roomid, game);
-        return "Roomid: "+game.roomid +" word: "+game.word;
+        JSONObject object = new JSONObject();
+        object.put("roomid", game.roomid);
+        return object.toString();
     }
     
     @GET
-    @Path("listGames")
+    @Path("listRooms")
     @Produces(MediaType.APPLICATION_JSON)
     public String listGames(@QueryParam("token") String token, @QueryParam("username") String username) throws Exception {
         JSONArray jsonMap = new JSONArray();
@@ -79,22 +82,23 @@ public class MultiplayerResource {
                 conn.update("INSERT INTO hang_multi_users (roomid, userid) VALUES ('"+roomid+"', '"+userid+"');");
                 MultiplayerUser user = new MultiplayerUser(userid, game);
                 game.addUser(user);
-                return "{"
-                        + "\"roomid\": [\""+roomid+"\"] , "
-                        + "\"round\": [\""+1+"\"] , "
-                        + "\"word\": [\""+game.word+"\"] "
-                        + "}";
-            }
-            
-            /* Not found in object list, check database */
-            ResultSet res = conn.query("SELECT * FROM hang_multi_rooms WHERE roomid='"+roomid+"';");
-            if (res.first()) {
-                conn.update("INSERT INTO hang_multi_users (roomid, userid) VALUES ('"+roomid+"', '"+userid+"');");
-                return "{"
-                        + "\"roomid\": [\""+res.getString("roomid")+"\"] , "
-                        + "\"round\": [\""+res.getDouble("round")+"\"] , "
-                        + "\"word\": [\""+res.getString("word")+"\"] "
-                        + "}";
+                JSONObject object = new JSONObject();
+                object.put("roomid", game.roomid);
+                object.put("round", game.round);
+                return object.toString();
+            } else {
+                /* Not found in object list, check database */
+                ResultSet res = conn.query("SELECT * FROM hang_multi_rooms WHERE roomid='"+roomid+"';");
+                if (res.first()) {
+                    conn.update("INSERT INTO hang_multi_users (roomid, userid) VALUES ('"+roomid+"', '"+userid+"');");
+                    MultiplayerGame game = multiplayerGames.get(roomid);
+                    MultiplayerUser user = new MultiplayerUser(userid, game);
+                    game.addUser(user);
+                    JSONObject object = new JSONObject();
+                    object.put("roomid", res.getString("roomid"));
+                    object.put("round", res.getInt("round"));
+                    return object.toString();
+                }
             }
             return "There's no available game with that roomid.";
         } else {
@@ -160,7 +164,8 @@ public class MultiplayerResource {
         MultiplayerGame game = multiplayerGames.get(roomid);
         MultiplayerUser user = game.getUser(userid);
         
-        MultiplayerLogic.guessLetter(game, userid, letter.toLowerCase());
+        String lower = letter.toLowerCase();
+        MultiplayerLogic.guessLetter(game, userid, lower);
         
         JSONObject object = new JSONObject();
         object.put("word", user.userword);
@@ -214,6 +219,35 @@ public class MultiplayerResource {
         }
     }
     
+    
+    @GET
+    @Path("{roomid}/nextRound")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String nextRound(@Suspended final AsyncResponse asyncResponse, @PathParam("roomid") String roomid) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String result = veryExpensiveOperation();
+                asyncResponse.resume(result);
+            }
+            
+            public String veryExpensiveOperation() {
+                while (multiplayerGames.get(roomid).gameIsActive()) {
+                    /* Do Nothing */
+                }
+                try {
+                    Thread.sleep(10000);
+                    JSONObject object = new JSONObject();
+                    object.put("word", multiplayerGames.get(roomid).users.get(0).userword);
+                    object.put("round", multiplayerGames.get(roomid).round);
+                    return object.toString();
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+            }
+        }).start();
+        return null;
+    }
     
     private String generateGameID() {
         Random random = new SecureRandom();
