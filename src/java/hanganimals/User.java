@@ -1,6 +1,6 @@
 package hanganimals;
 
-import com.example.UserResource;
+import hanganimals.rest.UserResource;
 
 public class User {
 

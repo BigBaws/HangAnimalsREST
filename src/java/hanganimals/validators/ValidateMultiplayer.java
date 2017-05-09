@@ -1,6 +1,6 @@
 package hanganimals.validators;
 
-import com.example.LoginResource;
+import hanganimals.rest.LoginResource;
 import hanganimals.User;
 
 /**
