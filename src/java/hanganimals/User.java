@@ -1,18 +1,17 @@
 package hanganimals;
 
 import com.example.UserResource;
-import java.util.ArrayList;
 
 public class User {
 
-    public String name, userid, image, study, animal, animalcolor, token;
-    public int currency, singleplayer, multiplayer;
+    public String name, userid, image, singleplayer, multiplayer, study, animal, animalcolor, token;
+    public int currency;
     
     public User() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported function.");
     }
 
-    public User(String name, String userid, String image, String studeretning, int currency, int singleplayer, int multiplayer, String animal, String animalcolor, String token) {
+    public User(String name, String userid, String image, String studeretning, int currency, String singleplayer, String multiplayer, String animal, String animalcolor, String token) {
         this.name = name;
         this.userid = userid;
         this.image = image;
@@ -23,8 +22,13 @@ public class User {
         this.animal = animal;
         this.animalcolor = animalcolor;
         this.token = token;
-        UserResource.onlineUsers.add(this);
     }
-    
+
+    public boolean validte(String token) {
+        if (token.equals(this.token)) {
+            return true;
+        }
+        return false;
+    }
 
 }

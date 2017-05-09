@@ -2,6 +2,7 @@ package com.example;
 
 import brugerautorisation.data.Bruger;
 import brugerautorisation.transport.rmi.Brugeradmin;
+import hanganimals.MultiplayerGame;
 import hanganimals.User;
 import hanganimals.database.Connector;
 import java.math.BigInteger;
@@ -10,6 +11,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.security.SecureRandom;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.Random;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
@@ -17,18 +19,18 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.json.JSONObject;
 
 @Path("/login")
 public class LoginResource {
     
+    public static HashMap<String, User> users = new HashMap<>();
     Connector conn = Connector.getInstance();
     
     /* User */
-    String token, animal, animalcolor;
-    int currency, singleplayer, multiplayer;
+    String token, animal, animalcolor, singleplayer, multiplayer;
+    int currency;
     
     @Context
     private UriInfo context;
@@ -50,8 +52,8 @@ public class LoginResource {
                 if (res.first()) {
                     token = generateToken();
                     currency = res.getInt("currency");
-                    singleplayer = res.getInt("singleplayer");
-                    multiplayer = res.getInt("multiplayer");
+                    singleplayer = res.getString("singleplayer");
+                    multiplayer = res.getString("multiplayer");
                     animal = res.getString("animal");
                     animalcolor = res.getString("animalcolor");
                 } else {
@@ -59,8 +61,8 @@ public class LoginResource {
                     statement.execute();
                     token = generateToken();
                     currency = 0;
-                    singleplayer = 0;
-                    multiplayer = 0;
+                    singleplayer = "0";
+                    multiplayer = "0";
                     animal = "sheep";
                     animalcolor = "white";
                 }
@@ -76,7 +78,8 @@ public class LoginResource {
                         animalcolor,
                         token
                 );
-                UserResource.onlineUsers.add(user);
+                /* Need method to remove user again (update a timer when REST is called) */
+                users.put(user.userid, user);
                 JSONObject object = new JSONObject();
                 object.put("name", b.fornavn+" "+b.efternavn);
                 object.put("userid", b.brugernavn);

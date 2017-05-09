@@ -1,9 +1,11 @@
 package com.example;
 
+import hanganimals.exceptions.TokenException;
 import hanganimals.MultiplayerGame;
 import hanganimals.database.Connector;
 import hanganimals.gamelogic.MultiplayerLogic;
 import hanganimals.models.MultiplayerUser;
+import hanganimals.validators.ValidateUser;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
@@ -40,14 +42,20 @@ public class MultiplayerResource {
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
     public String createRoom(@QueryParam("token") String token) throws Exception {
-        MultiplayerGame game = new MultiplayerGame(generateGameID());
-        
-        conn.update("INSERT INTO hang_multi_rooms (roomid, round, word) VALUES ('"+game.roomid+"', '1', '"+game.word+"');");
-        
-        multiplayerGames.put(game.roomid, game);
-        JSONObject object = new JSONObject();
-        object.put("roomid", game.roomid);
-        return object.toString();
+        /* Token Validation */
+        if (ValidateUser.validateToken(token)) {
+            /* Create new game */
+            MultiplayerGame game = new MultiplayerGame(generateGameID());
+            conn.update("INSERT INTO hang_multi_rooms (roomid, round, word) VALUES ('"+game.roomid+"', '1', '"+game.word+"');");
+
+            /* Add game to Multiplayer Rooms */
+            multiplayerGames.put(game.roomid, game);
+            JSONObject object = new JSONObject();
+            object.put("roomid", game.roomid);
+            return object.toString();
+        } else {
+            throw new TokenException("Token or Userid was not accepted.");
+        }
     }
     
     @GET
