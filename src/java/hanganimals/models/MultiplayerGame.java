@@ -1,4 +1,4 @@
-package hanganimals;
+package hanganimals.models;
 
 import hanganimals.gamelogic.MultiplayerLogic;
 import hanganimals.gamelogic.WordEngine;

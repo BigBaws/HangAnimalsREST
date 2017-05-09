@@ -1,6 +1,6 @@
 package hanganimals.gamelogic;
 
-import hanganimals.MultiplayerGame;
+import hanganimals.models.MultiplayerGame;
 import hanganimals.models.MultiplayerUser;
 
 public class MultiplayerLogic {

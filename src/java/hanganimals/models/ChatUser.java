@@ -1,6 +1,5 @@
 package hanganimals.models;
 
-import hanganimals.MultiplayerGame;
 import hanganimals.database.Connector;
 import java.sql.SQLException;
 import java.util.ArrayList;

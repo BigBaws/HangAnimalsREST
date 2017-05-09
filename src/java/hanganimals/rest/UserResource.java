@@ -1,6 +1,6 @@
 package hanganimals.rest;
 
-import hanganimals.User;
+import hanganimals.models.User;
 import java.util.ArrayList;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;

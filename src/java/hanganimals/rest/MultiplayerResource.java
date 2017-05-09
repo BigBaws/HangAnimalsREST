@@ -1,7 +1,7 @@
 package hanganimals.rest;
 
 import hanganimals.exceptions.TokenException;
-import hanganimals.MultiplayerGame;
+import hanganimals.models.MultiplayerGame;
 import hanganimals.database.Connector;
 import hanganimals.gamelogic.MultiplayerLogic;
 import hanganimals.models.MultiplayerUser;

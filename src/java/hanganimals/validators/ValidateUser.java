@@ -1,7 +1,7 @@
 package hanganimals.validators;
 
 import hanganimals.rest.LoginResource;
-import hanganimals.User;
+import hanganimals.models.User;
 
 /**
  *

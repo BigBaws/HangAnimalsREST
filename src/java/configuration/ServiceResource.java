@@ -1,4 +1,4 @@
-package com.users;
+package configuration;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;

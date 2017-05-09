@@ -2,8 +2,8 @@ package hanganimals.rest;
 
 import brugerautorisation.data.Bruger;
 import brugerautorisation.transport.rmi.Brugeradmin;
-import hanganimals.MultiplayerGame;
-import hanganimals.User;
+import hanganimals.models.MultiplayerGame;
+import hanganimals.models.User;
 import hanganimals.database.Connector;
 import java.math.BigInteger;
 import java.net.MalformedURLException;

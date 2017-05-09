@@ -1,6 +1,6 @@
 package hanganimals.gamelogic;
 
-import hanganimals.SingleplayerGame;
+import hanganimals.models.SingleplayerGame;
 
 public class SingleplayerLogic {
     

@@ -1,4 +1,4 @@
-package com.users;
+package configuration;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -24,7 +24,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.users.ServiceResource.class);
+        resources.add(configuration.ServiceResource.class);
         resources.add(hanganimals.rest.AnimalResource.class);
         resources.add(hanganimals.rest.ChatResource.class);
         resources.add(hanganimals.rest.HighscoreResource.class);

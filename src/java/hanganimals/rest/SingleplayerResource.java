@@ -1,6 +1,6 @@
 package hanganimals.rest;
 
-import hanganimals.SingleplayerGame;
+import hanganimals.models.SingleplayerGame;
 import hanganimals.database.Connector;
 import hanganimals.exceptions.DatabaseException;
 import hanganimals.exceptions.ThreadException;
