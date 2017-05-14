@@ -44,7 +44,15 @@ public class WordEngine
 
             data = data.replaceAll("<.+?>", " ").toLowerCase().replaceAll("[^a-zæøå]", " ");
             System.out.println("data = " + data);
-            return new ArrayList<>(Arrays.asList(data.split(" ")));
+            String[] temp = data.split(" ");
+            ArrayList<String> tempwords = new ArrayList<>();
+            
+            for(String word : temp) {
+                if(word.length() > 4)
+                    tempwords.add(word);
+            }
+            
+            return tempwords;
         }
         catch (Exception e)
         {
