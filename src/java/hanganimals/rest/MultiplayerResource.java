@@ -4,6 +4,7 @@ import hanganimals.exceptions.TokenException;
 import hanganimals.models.MultiplayerGame;
 import hanganimals.database.Connector;
 import hanganimals.gamelogic.MultiplayerLogic;
+import hanganimals.gamelogic.WordEngine;
 import hanganimals.models.MultiplayerUser;
 import hanganimals.validators.ValidateUser;
 import java.math.BigInteger;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -41,7 +43,7 @@ public class MultiplayerResource {
     @PUT
     @Path("create")
     @Produces(MediaType.APPLICATION_JSON)
-    public String createRoom(@QueryParam("token") String token) throws Exception {
+    public String createRoom(@FormParam("token") String token) throws Exception {
         /* Token Validation */
         if (ValidateUser.validateToken(token)) {
             /* Create new game */
@@ -62,6 +64,7 @@ public class MultiplayerResource {
     @Path("listRooms")
     @Produces(MediaType.APPLICATION_JSON)
     public String listGames(@QueryParam("token") String token, @QueryParam("username") String username) throws Exception {
+        ValidateUser.checkToken(token);
         JSONArray jsonMap = new JSONArray();
         for(String key : multiplayerGames.keySet()) {
             MultiplayerGame entry = multiplayerGames.get(key);
@@ -80,8 +83,10 @@ public class MultiplayerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String joinRoom (
             @PathParam("roomid") String roomid,
-            @QueryParam("token") String token,
-            @QueryParam("userid") String userid) throws Exception {
+            @FormParam("token") String token,
+            @FormParam("userid") String userid) throws Exception {
+        ValidateUser.checkToken(token);
+        
         if (!userid.isEmpty() || !roomid.isEmpty()) {
             
             /* Check if room is in the object list */
@@ -127,14 +132,70 @@ public class MultiplayerResource {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String result = veryExpensiveOperation();
-                asyncResponse.resume(result);
+                try {
+                    String result = veryExpensiveOperation();
+                    asyncResponse.resume(result);
+                }
+                catch(Exception e) {
+                    
+                }
             }
             
-            public String veryExpensiveOperation() {
+            public String veryExpensiveOperation() throws Exception {
                 while (multiplayerGames.get(roomid).gameIsActive()) {
                     /* Do Nothing */
                 }
+                Thread.sleep(10000);
+                String userword = null;
+                multiplayerGames.get(roomid).word = multiplayerGames.get(roomid).nextword;
+                for (String key : multiplayerGames.get(roomid).users.keySet()) {
+                    MultiplayerUser user = multiplayerGames.get(roomid).users.get(key);
+                    user.usedletters.clear();
+                    user.wrongs = 0;
+                    user.lastLetterCorrect = false;
+                    user.Lost = false;
+                    user.Won = false;
+                    MultiplayerLogic.updateVisibleWord(multiplayerGames.get(roomid), user.userid);
+                    userword = user.userword;
+                }
+                
+                try {
+                    JSONObject object = new JSONObject();
+                    object.put("winner", multiplayerGames.get(roomid).winner);
+                    object.put("userword", userword);
+                    multiplayerGames.get(roomid).gameIsLost = false;
+                    multiplayerGames.get(roomid).gameIsWon = false;
+                    return object.toString();
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                
+            }
+        }).start();
+        return "WTF";
+    }
+    
+    @GET
+    @Path("{roomid}/won")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String won(@Suspended final AsyncResponse asyncResponse, @PathParam("roomid") String roomid) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String result = veryExpensiveOperation();
+                    asyncResponse.resume(result);
+                }
+                catch(Exception e) {
+                    
+                }
+            }
+            
+            public String veryExpensiveOperation() throws Exception {
+                while (multiplayerGames.get(roomid).gameIsActive()) {
+                    /* Do Nothing */
+                }
+                
                 try {
                     JSONObject object = new JSONObject();
                     object.put("winner", multiplayerGames.get(roomid).winner);
@@ -155,7 +216,7 @@ public class MultiplayerResource {
             @PathParam("roomid") String roomid,
             @QueryParam("token") String token,
             @QueryParam("userid") String userid) throws Exception {
-        
+        ValidateUser.checkToken(token, userid);
         JSONObject object = new JSONObject();
         object.put("userword", multiplayerGames.get(roomid).getUser(userid).userword);
         return object.toString();
@@ -166,9 +227,10 @@ public class MultiplayerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String guess(
             @PathParam("roomid") String roomid,
-            @QueryParam("token") String token,
-            @QueryParam("userid") String userid,
-            @QueryParam("letter") String letter) throws Exception {
+            @FormParam("token") String token,
+            @FormParam("userid") String userid,
+            @FormParam("letter") String letter) throws Exception {
+        ValidateUser.checkToken(token, userid);
         MultiplayerGame game = multiplayerGames.get(roomid);
         MultiplayerUser user = game.getUser(userid);
         
@@ -192,6 +254,7 @@ public class MultiplayerResource {
             @PathParam("roomid") String roomid,
             @QueryParam("token") String token) throws Exception {
         
+        ValidateUser.checkToken(token);
         Collection<MultiplayerUser> usersCollection = multiplayerGames.get(roomid).users.values();
         MultiplayerUser[] users = usersCollection.toArray(new MultiplayerUser[usersCollection.size()]);
         
@@ -213,16 +276,17 @@ public class MultiplayerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public void leave(
             @PathParam("roomid") String roomid,
-            @QueryParam("token") String token,
-            @QueryParam("userid") String userid) throws Exception {
+            @FormParam("token") String token,
+            @FormParam("userid") String userid) throws Exception {
+        ValidateUser.checkToken(token, userid);
         if (!userid.isEmpty() || !roomid.isEmpty()) {
             
             /* Check if room is in the object list */
             if(multiplayerGames.containsKey(roomid)) {
                 MultiplayerGame game = multiplayerGames.get(roomid);
                 MultiplayerUser user = new MultiplayerUser(userid, game);
-                conn.query("DELETE FROM hang_multi_users WHERE userid='"+userid+"'");
-                game.removeUser(user);
+                conn.update("DELETE FROM hang_multi_users WHERE userid='"+userid+"'");
+                game.removeUser(userid);
             }
         }
     }

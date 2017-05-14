@@ -31,14 +31,13 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(hanganimals.rest.AnimalResource.class);
         resources.add(hanganimals.rest.ChatResource.class);
-        resources.add(hanganimals.rest.HighscoreResource.class);
-        resources.add(hanganimals.rest.LogicResource.class);
+        //resources.add(hanganimals.rest.HighscoreResource.class);
+        //resources.add(hanganimals.rest.LogicResource.class);
         resources.add(hanganimals.rest.LoginResource.class);
-        resources.add(hanganimals.rest.MultiplayerLogicResource.class);
+        //resources.add(hanganimals.rest.MultiplayerLogicResource.class);
         resources.add(hanganimals.rest.MultiplayerResource.class);
         resources.add(hanganimals.rest.PaymentResource.class);
-        resources.add(hanganimals.rest.ServiceResource.class);
-        resources.add(hanganimals.rest.SingleplayerLogicResource.class);
+        //resources.add(hanganimals.rest.ServiceResource.class);
         resources.add(hanganimals.rest.SingleplayerResource.class);
         resources.add(hanganimals.rest.UserResource.class);
     }

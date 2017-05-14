@@ -13,6 +13,7 @@ public class MultiplayerGame {
     
     public boolean gameIsWon = false;
     public boolean gameIsLost = false;
+    public String nextword;
     
     public MultiplayerGame(String roomid) {
         this.roomid = roomid;
@@ -29,8 +30,8 @@ public class MultiplayerGame {
         MultiplayerLogic.updateVisibleWord(this, user.userid);
     }
     
-    public void removeUser(MultiplayerUser user) {
-        users.remove(user);
+    public void removeUser(String userid) {
+        users.remove(userid);
     }
     
     public int getNumberOfFinishedUsers() {
@@ -45,19 +46,21 @@ public class MultiplayerGame {
     }
     
     public void nextRound() throws Exception {
-        for (String key : users.keySet()) {
-            MultiplayerUser user = users.get(key);
-            if (this.winner == user.userid) {
-                this.word = WordEngine.getWord();
-            }
-            user.usedletters.clear();
-            user.wrongs = 0;
-            user.lastLetterCorrect = false;
-            MultiplayerLogic.updateVisibleWord(this, user.userid);
-        }
+//        for (String key : users.keySet()) {
+//            MultiplayerUser user = users.get(key);
+//            if (this.winner == user.userid) {
+//                this.nextword = WordEngine.getWord();
+//            }
+//            user.usedletters.clear();
+//            user.wrongs = 0;
+//            user.lastLetterCorrect = false;
+//            //MultiplayerLogic.updateVisibleWord(this, user.userid);
+//        }
+        
+        this.nextword = WordEngine.getWord();
         this.round++;
-        this.gameIsWon = false;
-        this.gameIsLost = false;
+        this.gameIsWon = true;
+        this.gameIsLost = true;
     }
     
     /*

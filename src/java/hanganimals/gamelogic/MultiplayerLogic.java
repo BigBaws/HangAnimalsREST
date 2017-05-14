@@ -15,6 +15,7 @@ public class MultiplayerLogic {
             user.lastLetterCorrect = true;
             user.gamescore++;
         } else {
+            user.gamescore++;
             user.lastLetterCorrect = false;
             user.wrongs = user.wrongs + 1;
             if (user.wrongs >= 6) {
@@ -33,7 +34,6 @@ public class MultiplayerLogic {
                 user.userword = user.userword + letter;
             } else {
                 user.userword = user.userword + "*";
-                user.gamescore--;
             }
         }
         if (!user.userword.contains("*")) {
@@ -49,9 +49,7 @@ public class MultiplayerLogic {
             }
             
             user.Won = true;
-            game.gameIsWon = true;
             game.winner = user.userid;
-            game.gameIsActive();
         }
         return user.userword;
     }
